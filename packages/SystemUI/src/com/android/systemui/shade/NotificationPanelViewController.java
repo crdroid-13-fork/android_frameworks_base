@@ -253,6 +253,8 @@ import com.android.wm.shell.animation.FlingAnimationUtils;
 
 import lineageos.providers.LineageSettings;
 
+import com.android.internal.util.android.VibrationUtils;
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -3591,7 +3593,7 @@ public final class NotificationPanelViewController implements Dumpable {
     private void maybeVibrateOnOpening(boolean openingWithTouch) {
         if (mVibrateOnOpening) {
             if (!openingWithTouch || !mHasVibratedOnOpen) {
-                mVibratorHelper.vibrate(VibrationEffect.EFFECT_TICK);
+                VibrationUtils.triggerVibration(mView.getContext(), 2);
                 mHasVibratedOnOpen = true;
                 mShadeLog.v("Vibrating on opening, mHasVibratedOnOpen=true");
             }
