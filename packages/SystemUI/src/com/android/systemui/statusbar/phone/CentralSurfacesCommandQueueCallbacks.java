@@ -31,9 +31,11 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.os.UserHandle;
 import android.os.VibrationAttributes;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.Slog;
 import android.view.InsetsState.InternalInsetsType;
@@ -338,7 +340,9 @@ public class CentralSurfacesCommandQueueCallbacks implements CommandQueue.Callba
             mMetricsLogger.action(MetricsEvent.ACTION_SYSTEM_NAVIGATION_KEY_DOWN);
             if (mNotificationPanelViewController.isFullyCollapsed()) {
                 if (mVibrateOnOpening) {
-                    VibrationUtils.triggerVibration(mContext, 2);
+                    int qsHapticsIntensity = Settings.System.getIntForUser(mContext.getContentResolver(),
+                            "qs_haptics_intensity", 1, UserHandle.USER_CURRENT);
+                    VibrationUtils.triggerVibration(mContext, qsHapticsIntensity);
                 }
                 mNotificationPanelViewController.expand(true /* animate */);
                 mNotificationStackScrollLayoutController.setWillExpand(true);
