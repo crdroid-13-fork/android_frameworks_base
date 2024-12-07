@@ -152,4 +152,8 @@
 
     <!-- Ignore post running notifications for selected apps -->
     <java-symbol type="array" name="config_postNotificationIgnoredApps" />
+
+    <!-- Build properties from a GMS certified device against current platform SPL level -->
+    <java-symbol type="array" name="config_certifiedBuildProperties" />
+
 </resources>
