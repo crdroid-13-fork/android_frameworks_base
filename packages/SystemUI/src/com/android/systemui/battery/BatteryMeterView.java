@@ -335,10 +335,6 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
         mBatteryEstimateFetcher = fetcher;
     }
 
-    void setBatteryPresence(boolean isPresent) {
-        mPresent = isPresent;
-    }
-
     void setDisplayShieldEnabled(boolean displayShieldEnabled) {
         mDisplayShieldEnabled = displayShieldEnabled;
     }
@@ -487,7 +483,7 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
         mBatteryStateUnknown = isUnknown;
         updateContentDescription();
 
-        if (mBatteryStateUnknown && mPresent) {
+        if (mBatteryStateUnknown) {
             mBatteryIconView.setImageDrawable(getUnknownStateDrawable());
         } else {
             updateDrawable();
@@ -640,7 +636,6 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
         pw.println("    mBatteryStateUnknown: " + mBatteryStateUnknown);
         pw.println("    mLevel: " + mLevel);
         pw.println("    mMode: " + mShowPercentMode);
-        pw.println("    mPresent: " + mPresent);
     }
 
     @VisibleForTesting
