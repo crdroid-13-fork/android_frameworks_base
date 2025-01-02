@@ -160,6 +160,7 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
         pw.println("BatteryController state:");
         pw.print("  mLevel="); pw.println(mLevel);
         pw.print("  mPluggedIn="); pw.println(mPluggedIn);
+        pw.print("  mPresent="); pw.println(mPresent);
         pw.print("  mCharging="); pw.println(mCharging);
         pw.print("  mCharged="); pw.println(mCharged);
         pw.print("  mIsOverheated="); pw.println(mIsOverheated);
@@ -196,6 +197,7 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
         cb.onBatteryUnknownStateChanged(mStateUnknown);
         cb.onWirelessChargingChanged(mWirelessCharging);
         cb.onIsOverheatedChanged(mIsOverheated);
+        cb.onBatteryPresentChanged(mPresent);
     }
 
     @Override
@@ -228,6 +230,11 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
             }
 
             boolean present = intent.getBooleanExtra(EXTRA_PRESENT, true);
+            if (present != mPresent) {
+                mPresent = present;
+                fireBatteryPresentChanged();
+            }
+
             boolean unknown = !present;
             if (unknown != mStateUnknown) {
                 mStateUnknown = unknown;
@@ -289,6 +296,11 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
     @Override
     public boolean isPluggedIn() {
         return mPluggedIn;
+    }
+
+    @Override
+    public boolean isPresent() {
+        return mPresent;
     }
 
     @Override
@@ -431,6 +443,15 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
             final int n = mChangeCallbacks.size();
             for (int i = 0; i < n; i++) {
                 mChangeCallbacks.get(i).onIsOverheatedChanged(mIsOverheated);
+            }
+        }
+    }
+
+    private void fireBatteryPresentChanged() {
+        synchronized (mChangeCallbacks) {
+            final int n = mChangeCallbacks.size();
+            for (int i = 0; i < n; i++) {
+                mChangeCallbacks.get(i).onBatteryPresentChanged(mPresent);
             }
         }
     }
