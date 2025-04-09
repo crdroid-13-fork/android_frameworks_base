@@ -25,22 +25,9 @@
     <!-- Whether to use old mobile type icons as default -->
     <bool name="config_useOldMobileIcons">false</bool>
 
-    <!-- Build properties from a GMS certified device against current platform SPL level -->
-    <string-array name="config_certifiedBuildProperties" translatable="false">
-      <!--
-        Each entry must be of the format
-            FIELD:value
-        with the field belonging to android.os.Build or android.os.Build.VERSION class.
-        Example:
-        <item>BRAND:foo</item>
-        <item>DEVICE:bar</item>
-        <item>FINGERPRINT:foo/bar/bar:1.0/lorem/ipsum:dolor/sit-amet</item>
-        <item>VERSION.RELEASE:1.0</item>
-      -->
-    </string-array>
-
     <!-- Whether device has dash charging support -->
     <bool name="config_hasDashCharger">false</bool>
+
     <!-- Path to dash charging status file -->
     <string name="config_DashChargerStatusPath">/sys/class/power_supply/battery/fastchg_status</string>
 
