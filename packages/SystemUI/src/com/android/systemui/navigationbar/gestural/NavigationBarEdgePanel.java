@@ -449,16 +449,16 @@ public class NavigationBarEdgePanel extends View implements NavigationEdgeBackPl
     }
 
     @Override
-    public void setEdgeHapticEnabled(boolean edgeHapticEnabled) {
-        mEdgeHapticEnabled = edgeHapticEnabled;
-    }
-
-    @Override
     public void setLongSwipeEnabled(boolean enabled) {
         mLongSwipeThreshold = enabled ? MathUtils.min(
                 mDisplaySize.x * 0.5f, mLayoutParams.width * 2.5f) : 0.0f;
         mIsLongSwipeEnabled = mLongSwipeThreshold > 0;
         setTriggerLongSwipe(mIsLongSwipeEnabled && mTriggerLongSwipe, false /* animated */);
+    }
+
+    @Override
+    public void setEdgeHapticEnabled(boolean edgeHapticEnabled) {
+        mEdgeHapticEnabled = edgeHapticEnabled;
     }
 
     /**
@@ -571,10 +571,6 @@ public class NavigationBarEdgePanel extends View implements NavigationEdgeBackPl
 
         if (mShowProtection) {
             canvas.drawPath(arrowPath, mProtectionPaint);
-        }
-
-        if (mIsLeftPanel) {
-            canvas.scale(-1f, 1f, x / 2f, y / 2f);
         }
 
         canvas.drawPath(arrowPath, mPaint);
@@ -938,9 +934,7 @@ public class NavigationBarEdgePanel extends View implements NavigationEdgeBackPl
     private void setTriggerLongSwipe(boolean triggerLongSwipe, boolean animated) {
         if (mTriggerLongSwipe != triggerLongSwipe) {
             mTriggerLongSwipe = triggerLongSwipe;
-            if (mEdgeHapticEnabled) {
-                mVibratorHelper.vibrate(VibrationEffect.EFFECT_DOUBLE_CLICK);
-            }
+            mVibratorHelper.vibrate(VibrationEffect.EFFECT_CLICK);
             mAngleAnimation.cancel();
             updateAngle(animated);
             // Whenever the trigger back state changes the existing translation animation should be
