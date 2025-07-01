@@ -59,7 +59,6 @@ import com.android.systemui.statusbar.policy.BrightnessMirrorController;
 import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
-import com.android.internal.util.android.VibrationUtils
 
 public class BrightnessController implements ToggleSlider.Listener, MirroredBrightnessController {
     private static final String TAG = "CentralSurfaces.BrightnessController";
@@ -116,7 +115,7 @@ public class BrightnessController implements ToggleSlider.Listener, MirroredBrig
     private Vibrator mVibrator;
     private static final VibrationEffect BRIGHTNESS_SLIDER_HAPTIC =
             VibrationEffect.get(VibrationEffect.EFFECT_TICK);
-    private int mBrightnessSliderHaptic;
+    private boolean mBrightnessSliderHaptic;
 
     @Override
     public void setMirror(BrightnessMirrorController controller) {
@@ -399,8 +398,8 @@ public class BrightnessController implements ToggleSlider.Listener, MirroredBrig
         setBrightness(valFloat);
 
         // Give haptic feedback only if brightness is changed manually
-        if (mBrightnessSliderHaptic > 0 && mVibrator != null && tracking)
-            VibrationUtils.triggerVibration(mContext, mBrightnessSliderHaptic);
+        if (mBrightnessSliderHaptic && mVibrator != null && tracking)
+            mVibrator.vibrate(BRIGHTNESS_SLIDER_HAPTIC);
 
         if (!tracking) {
             AsyncTask.execute(new Runnable() {
