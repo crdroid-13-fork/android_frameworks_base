@@ -3691,6 +3691,18 @@ public class ActivityManagerService extends IActivityManager.Stub
     @Override
     public boolean clearApplicationUserData(final String packageName, boolean keepState,
             final IPackageDataObserver observer, int userId) {
+        return clearApplicationUserData(packageName, keepState, observer, userId, true);
+    }
+
+    @Override
+    public boolean clearApplicationUserDataWithoutPermissionReset(final String packageName,
+            boolean keepState, final IPackageDataObserver observer, int userId) {
+        return clearApplicationUserData(packageName, keepState, observer, userId, false);
+    }
+
+    private boolean clearApplicationUserData(final String packageName, boolean keepState,
+            final IPackageDataObserver observer, int userId,
+            boolean restorePregrantedPermissions) {
         enforceNotIsolatedCaller("clearApplicationUserData");
         int uid = Binder.getCallingUid();
         int pid = Binder.getCallingPid();
@@ -3725,7 +3737,8 @@ public class ActivityManagerService extends IActivityManager.Stub
                 } catch (RemoteException e) {
                     /* ignore */
                 }
-                permitted = (applicationInfo != null && applicationInfo.uid == uid) // own uid data
+                permitted = (applicationInfo != null && applicationInfo.uid == uid
+                        && !restorePregrantedPermissions) // own uid data, not changing pregrants
                         || (checkComponentPermission(permission.CLEAR_APP_USER_DATA,
                                 pid, uid, -1, true) == PackageManager.PERMISSION_GRANTED);
             }
@@ -3807,7 +3820,8 @@ public class ActivityManagerService extends IActivityManager.Stub
 
             try {
                 // Clear application user data
-                pm.clearApplicationUserData(packageName, localObserver, resolvedUserId);
+                pm.clearApplicationUserData(packageName, localObserver, resolvedUserId,
+                        restorePregrantedPermissions);
 
                 if (appInfo != null) {
                     // Restore already established notification state and permission grants,
