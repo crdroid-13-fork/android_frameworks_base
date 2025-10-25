@@ -433,6 +433,7 @@ public static final class Digest {
         public byte[] model;
 
         public int securityLevel;
+        public boolean noAuthRequired;
 
         // Extra fields for response metadata
         public int osVersion = KeyboxChainGenerator.getOsVersion();
@@ -497,6 +498,9 @@ public static final class Digest {
                 break;
             case Tag.HARDWARE_TYPE:
                 securityLevel = kp.value.getSecurityLevel();
+                break;
+            case Tag.NO_AUTH_REQUIRED:
+                noAuthRequired = kp.value.getBoolValue();
                 break;
                 }
             }
