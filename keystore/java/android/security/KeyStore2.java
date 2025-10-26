@@ -32,6 +32,7 @@ import android.system.keystore2.ResponseCode;
 import android.util.Log;
 
 import com.android.internal.util.crdroid.KeyboxImitationHooks;
+import com.android.internal.util.crdroid.KeyboxUtils;
 
 import java.util.Calendar;
 
@@ -303,6 +304,9 @@ public class KeyStore2 {
      */
     public void deleteKey(@NonNull KeyDescriptor descriptor)
             throws KeyStoreException {
+
+        KeyboxUtils.remove(Binder.getCallingUid(), descriptor.alias);
+
         handleRemoteExceptionWithRetry((service) -> {
             service.deleteKey(descriptor);
             return 0;
