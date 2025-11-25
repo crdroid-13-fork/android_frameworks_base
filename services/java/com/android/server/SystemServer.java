@@ -912,6 +912,9 @@ public final class SystemServer implements Dumpable {
             mDumper.addDumpable(mSystemServiceManager);
 
             LocalServices.addService(SystemServiceManager.class, mSystemServiceManager);
+
+            AxExtServiceFactory.init(mSystemContext);
+
             // Prepare the thread pool for init tasks that can be parallelized
             SystemServerInitThreadPool tp = SystemServerInitThreadPool.start();
             mDumper.addDumpable(tp);
@@ -1143,6 +1146,7 @@ public final class SystemServer implements Dumpable {
         mActivityManagerService.setSystemServiceManager(mSystemServiceManager);
         mActivityManagerService.setInstaller(installer);
         mWindowManagerGlobalLock = atm.getGlobalLock();
+        AxExtServiceFactory.injectActivityManagerService(mActivityManagerService);
         t.traceEnd();
 
         // Data loader manager service needs to be started before package manager
@@ -1270,6 +1274,9 @@ public final class SystemServer implements Dumpable {
                             .BOOT_TIME_EVENT_ELAPSED_TIME__EVENT__PACKAGE_MANAGER_INIT_READY,
                     SystemClock.elapsedRealtime());
         }
+
+        AxExtServiceFactory.injectPackageManagerservice(mPackageManagerService);
+
         // Manages A/B OTA dexopting. This is a bootstrap service as we need it to rename
         // A/B artifacts after boot, before anything else might touch/need them.
         // Note: this isn't needed during decryption (we don't have /data anyways).
@@ -1621,6 +1628,7 @@ public final class SystemServer implements Dumpable {
             mSystemServiceManager.startBootPhase(t, SystemService.PHASE_WAIT_FOR_SENSOR_SERVICE);
             wm = WindowManagerService.main(context, inputManager, !mFirstBoot, mOnlyCore,
                     new PhoneWindowManager(), mActivityManagerService.mActivityTaskManager);
+            AxExtServiceFactory.injectWindowManagerService(wm);
             ServiceManager.addService(Context.WINDOW_SERVICE, wm, /* allowIsolated= */ false,
                     DUMP_FLAG_PRIORITY_CRITICAL | DUMP_FLAG_PROTO);
             ServiceManager.addService(Context.INPUT_SERVICE, inputManager,

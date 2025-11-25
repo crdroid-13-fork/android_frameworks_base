@@ -375,6 +375,7 @@ import com.android.internal.util.function.QuadFunction;
 import com.android.internal.util.function.QuintFunction;
 import com.android.internal.util.function.UndecFunction;
 import com.android.server.AlarmManagerInternal;
+import com.android.server.AxExtServiceFactory;
 import com.android.server.DeviceIdleInternal;
 import com.android.server.DisplayThread;
 import com.android.server.IntentResolver;
@@ -5202,6 +5203,11 @@ public class ActivityManagerService extends IActivityManager.Stub
                     || "".equals(VoldProperties.encrypt_progress().orElse(""))) {
                 SystemProperties.set("dev.bootcomplete", "1");
             }
+
+            mHandler.postDelayed(() -> {
+                AxExtServiceFactory.onLateSystemReady();
+            }, 5000);
+
             mUserController.sendBootCompleted(
                     new IIntentReceiver.Stub() {
                         @Override
@@ -8375,6 +8381,8 @@ public class ActivityManagerService extends IActivityManager.Stub
             mComponentAliasResolver.onSystemReady(mConstants.mEnableComponentAlias,
                     mConstants.mComponentAliasOverrides);
             t.traceEnd(); // componentAlias
+            
+            AxExtServiceFactory.systemReady();
 
             t.traceEnd(); // PhaseActivityManagerReady
         }
