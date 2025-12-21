@@ -18874,7 +18874,7 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
 
     private boolean hasAccountsOnAnyUser() {
         AccountManagerService accountManagerService = AccountManagerService.getSingleton();
-        return accountManagerService.getAllAccounts().length != 0;
+        return accountManagerService.getAllAccountsForSystemProcess().length != 0;
     }
 
     private void setBypassDevicePolicyManagementRoleQualificationStateInternal(

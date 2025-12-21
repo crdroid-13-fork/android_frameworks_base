@@ -380,14 +380,6 @@ public class PreferencesHelper implements RankingConfig {
             if (migrateToPermission) {
                 r.importance = appImportance;
                 r.migrateToPm = true;
-                if (r.uid != INVALID_UID) {
-                    // Don't call into permission system until we have a valid uid
-                    PackagePermission pkgPerm = new PackagePermission(
-                            r.pkg, UserHandle.getUserId(r.uid),
-                            r.importance != IMPORTANCE_NONE,
-                            hasUserConfiguredSettings(r));
-                    pkgPerms.add(pkgPerm);
-                }
             }
         } catch (Exception e) {
             Slog.w(TAG, "Failed to restore pkg", e);
@@ -2734,7 +2726,7 @@ public class PreferencesHelper implements RankingConfig {
                 synchronized (mPackagePreferences) {
                     PackagePreferences p = getOrCreatePackagePreferencesLocked(
                             pi.packageName, pi.applicationInfo.uid);
-                    if (p.migrateToPm && p.uid != UNKNOWN_UID) {
+                    if (p.migrateToPm && p.uid != INVALID_UID) {
                         try {
                             PackagePermission pkgPerm = new PackagePermission(
                                     p.pkg, UserHandle.getUserId(p.uid),
