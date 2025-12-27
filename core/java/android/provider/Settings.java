@@ -11956,19 +11956,6 @@ public final class Settings {
         @Readable
         public static final String KEYBOX_DATA = "keybox_data";
 
-        /**
-         * Store vboot key.
-         * @hide
-         */
-        @Readable
-        public static final String VBOOT_KEY = "vboot_key";
-
-        /**
-         * Store vboot hash.
-         * @hide
-         */
-        @Readable
-        public static final String VBOOT_HASH = "vboot_hash";
 
         /**
          * Keys we no longer back up under the current schema, but want to continue to
