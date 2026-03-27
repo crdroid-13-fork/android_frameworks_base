@@ -29,7 +29,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.security.pif.PlayIntegritySpoofService;
 import android.util.Log;
 import android.view.autofill.AutofillManager;
 
@@ -345,22 +344,6 @@ public class Application extends ContextWrapper implements ComponentCallbacks2 {
     @UnsupportedAppUsage
     /* package */ final void attach(Context context) {
         attachBaseContext(context);
-        String packageName = context != null ? context.getPackageName() : null;
-        String processName = getProcessName();
-        PlayIntegritySpoofService pif = PlayIntegritySpoofService.getInstance();
-       if (packageName != null) {
-            if (pif.shouldSpoofPhotos(packageName)) {
-                pif.spoofPhotosProps();
-            }
-        }
-
-        if (processName != null && pif.shouldSpoof(processName)) {
-            pif.spoofBuildFields(processName);
-            if (pif.isSpoofSignatureEnabled()) {
-                pif.spoofSignature();
-            }
-        }
-
         mLoadedApk = ContextImpl.getImpl(context).mPackageInfo;
     }
 
