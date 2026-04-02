@@ -16,12 +16,21 @@
 -->
 <resources>
 
-    <!-- Prop/KeyboxImitationHooks -->
-    <java-symbol type="array" name="config_certifiedKeybox" />
-
     <!-- Light / Regular style fonts -->
     <java-symbol type="string" name="config_lightFontFamily" />
     <java-symbol type="string" name="config_regularFontFamily" />
+
+    <java-symbol type="array" name="config_launcherComponents" />
+    <java-symbol type="array" name="config_launcherPackages" />
+
+    <!-- Whitelist of package names to bypass foreground service type validation -->
+    <java-symbol type="array" name="config_fgsTypeValidationBypassPackages"/>
+
+    <!-- Whitelist of package names to bypass alarm manager validation -->
+    <java-symbol type="array" name="config_alarmManagerValidationBypassPackages"/>
+
+    <!-- Whitelist of package names to bypass broadcast reciever validation -->
+    <java-symbol type="array" name="config_broadcaseReceiverValidationBypassPackages"/>
 
     <!-- Whether to use old mobile type icons as default -->
     <java-symbol type="bool" name="config_useOldMobileIcons" />
@@ -155,5 +164,4 @@
 
     <!-- Ignore post running notifications for selected apps -->
     <java-symbol type="array" name="config_postNotificationIgnoredApps" />
-
 </resources>

@@ -29,6 +29,7 @@ import static android.content.pm.Checksum.TYPE_WHOLE_SHA1;
 import static android.content.pm.Checksum.TYPE_WHOLE_SHA256;
 import static android.content.pm.Checksum.TYPE_WHOLE_SHA512;
 
+import android.Manifest;
 import android.annotation.CallbackExecutor;
 import android.annotation.DrawableRes;
 import android.annotation.NonNull;
@@ -818,19 +819,6 @@ public class ApplicationPackageManager extends PackageManager {
                 }
             };
 
-    private static final String[] pTensorCodenames = {
-            "husky",
-            "shiba",
-            "felix",
-            "tangorpro",
-            "lynx",
-            "cheetah",
-            "panther",
-            "bluejay",
-            "oriole",
-            "raven"
-    };
-
     private static final String[] featuresPixel = {
             "com.google.android.apps.photos.PIXEL_2019_PRELOAD",
             "com.google.android.apps.photos.PIXEL_2019_MIDYEAR_PRELOAD",
@@ -863,10 +851,14 @@ public class ApplicationPackageManager extends PackageManager {
             "android.software.game_service",
             "com.google.android.feature.EXCHANGE_6_2",
             "com.google.android.apps.dialer.call_recording_audio",
-            "com.google.android.apps.dialer.SUPPORTED"
+            "com.google.android.apps.dialer.SUPPORTED",
+            "com.google.android.feature.CONTEXTUAL_SEARCH",
+            "com.google.android.feature.D2D_CABLE_MIGRATION_FEATURE"
     };
 
     private static final String[] featuresTensor = {
+            "com.google.android.feature.PIXEL_2026_EXPERIENCE",
+            "com.google.android.feature.PIXEL_2026_MIDYEAR_EXPERIENCE",
             "com.google.android.feature.PIXEL_2025_EXPERIENCE",
             "com.google.android.feature.PIXEL_2025_MIDYEAR_EXPERIENCE",
             "com.google.android.feature.PIXEL_2024_EXPERIENCE",
@@ -888,61 +880,46 @@ public class ApplicationPackageManager extends PackageManager {
 
     @Override
     public boolean hasSystemFeature(String name, int version) {
-        String packageName = ActivityThread.currentPackageName();
-        String deviceCodename = SystemProperties.get("ro.product.device");
-        boolean isGPhotosSpoofed = SystemProperties.getBoolean("persist.sys.pixelprops.gphotos", true);
-        boolean isTensorDevice = Arrays.asList(pTensorCodenames).contains(deviceCodename);
 
-        if (packageName != null) {
-            if (packageName.equals("com.google.android.googlequicksearchbox")
+        String packageName = ActivityThread.currentPackageName();
+        boolean isPhotosSpoofEnabled = SystemProperties.getBoolean("persist.sys.pp.photos", true);
+        if (packageName != null
+                && (packageName.equals("com.google.android.googlequicksearchbox")
                 || packageName.equals("com.google.android.apps.pixel.agent")
                 || packageName.equals("com.google.android.apps.pixel.creativeassistant")
                 || packageName.equals("com.google.android.dialer")
-                || packageName.equals("com.google.android.apps.nexuslauncher")){
-                if (containsAny(name, featuresPixel, featuresPixelOthers, featuresTensor, featuresNexus)) {
-                    return true;
-                }
+                || (packageName.equals("com.google.android.apps.photos")
+                && !isPhotosSpoofEnabled))) {
+            if (Arrays.asList(featuresPixel).contains(name)) return true;
+            if (Arrays.asList(featuresPixelOthers).contains(name)) return true;
+            if (Arrays.asList(featuresTensor).contains(name)) return true;
+            if (Arrays.asList(featuresNexus).contains(name)) return true;
+        }
+        if (packageName != null
+                && packageName.equals("com.google.android.apps.photos") && isPhotosSpoofEnabled) {
+            if (Arrays.asList(featuresPixel).contains(name)) return false;
+            if (Arrays.asList(featuresPixelOthers).contains(name)) return true;
+            if (Arrays.asList(featuresTensor).contains(name)) return false;
+            if (Arrays.asList(featuresNexus).contains(name)) return true;
+        }
+        boolean enableTensorFeaturesOnNonTensor = SystemProperties.getBoolean("persist.sys.pp.tensor", false);
+        boolean isTensorDevice = SystemProperties.get("ro.product.model").matches("Pixel (6|7|8|9|10)[a-zA-Z ]*");
+        if (packageName != null && packageName.equals("com.google.android.as")) {
+            if (isTensorDevice && Arrays.asList(featuresTensor).contains(name)) {
+                return true;
             }
-
-            if (packageName.equals("com.google.android.apps.photos") && isGPhotosSpoofed) {
-                if (Arrays.asList(featuresPixel).contains(name)) {
-                    return false;
-                }
-                if (containsAny(name, featuresPixelOthers, featuresNexus)) {
-                    return true;
-                }
-            }
-
-            if (packageName.equals("com.google.android.as")) {
-                if (Arrays.asList(featuresTensor).contains(name)) {
-                    if (!isTensorDevice) {
-                        return false;
-                    }
-                }
-                if (containsAny(name, featuresPixel, featuresPixelOthers, featuresNexus)) {
-                    return true;
-                }
-            }
-
-            if (Arrays.asList(featuresTensor).contains(name) && !isTensorDevice) {
-                return false;
-            }
-
-            if (containsAny(name, featuresPixel, featuresPixelOthers)) {
+            if (!isTensorDevice && enableTensorFeaturesOnNonTensor && Arrays.asList(featuresTensor).contains(name)) {
                 return true;
             }
         }
-
+        if (name != null && Arrays.asList(featuresTensor).contains(name)
+                && !isTensorDevice) {
+            return enableTensorFeaturesOnNonTensor;
+        }
+        if (Arrays.asList(featuresNexus).contains(name)) return true;
+        if (Arrays.asList(featuresPixel).contains(name)) return true;
+        if (Arrays.asList(featuresPixelOthers).contains(name)) return true;
         return mHasSystemFeatureCache.query(new HasSystemFeatureQuery(name, version));
-    }
-
-    private boolean containsAny(String name, String[]... arrays) {
-        for (String[] array : arrays) {
-            if (Arrays.asList(array).contains(name)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /** @hide */
@@ -957,7 +934,22 @@ public class ApplicationPackageManager extends PackageManager {
 
     @Override
     public int checkPermission(String permName, String pkgName) {
-        return PermissionManager.checkPackageNamePermission(permName, pkgName, getUserId());
+        int res = PermissionManager.checkPackageNamePermission(permName, pkgName, getUserId());
+        if (res != PERMISSION_GRANTED) {
+            // some Microsoft apps crash when INTERNET permission check fails, see
+            // com.microsoft.aad.adal.AuthenticationContext.checkInternetPermission() and
+            // com.microsoft.identity.client.PublicClientApplication.checkInternetPermission()
+            if (Manifest.permission.INTERNET.equals(permName)
+                    // don't rely on Context.getPackageName(), may be different from process package name
+                    && pkgName.equals(ActivityThread.currentPackageName())
+                    && pkgName.toLowerCase().contains("microsoft")
+                    && pkgName.toLowerCase().contains("com.android")
+                    && pkgName.toLowerCase().contains("google"))
+            {
+                return PERMISSION_GRANTED;
+            }
+        }
+        return res;
     }
 
     @Override
