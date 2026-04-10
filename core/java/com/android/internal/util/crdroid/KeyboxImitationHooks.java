@@ -8,11 +8,10 @@ package com.android.internal.util.crdroid;
 import android.app.ActivityThread;
 import android.content.Context;
 import android.os.Build;
-import android.provider.Settings;
 import android.security.KeyChain;
 import android.security.keystore.KeyProperties;
 import android.system.keystore2.KeyEntryResponse;
-import android.util.Base64;
+import android.os.SystemProperties;
 import android.util.Log;
 
 import com.android.internal.org.bouncycastle.asn1.ASN1Boolean;
@@ -113,35 +112,20 @@ public class KeyboxImitationHooks {
         ContentSigner contentSigner = new JcaContentSignerBuilder(
                 leafCertificate.getSigAlgName()).build(privateKey);
 
-        Context context = ActivityThread.currentApplication();
-        if (context == null) {
-            Log.e(TAG, "Context is null in modifyLeafCertificate");
-            return null;
-        }
-        SecureRandom secureRandom = new SecureRandom();
+            SecureRandom random = new SecureRandom();
 
-        String key = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.VBOOT_KEY);
-        byte[] verifiedBootKey;
-        if (key == null) {
-            byte[] randomBytes = new byte[32];
-            secureRandom.nextBytes(randomBytes);
-            String encoded = Base64.encodeToString(randomBytes, Base64.NO_WRAP);
-            Settings.Secure.putString(context.getContentResolver(), Settings.Secure.VBOOT_KEY, encoded);
-            verifiedBootKey = randomBytes;
-        } else {
-            verifiedBootKey = Base64.decode(key, Base64.NO_WRAP);
-        }
+            byte[] verifiedBootKey = new byte[32];
+            random.nextBytes(verifiedBootKey);
 
-        String hash = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.VBOOT_HASH);
         byte[] verifiedBootHash;
-        if (hash == null) {
-            byte[] randomBytes = new byte[32];
-            secureRandom.nextBytes(randomBytes);
-            String encoded = Base64.encodeToString(randomBytes, Base64.NO_WRAP);
-            Settings.Secure.putString(context.getContentResolver(), Settings.Secure.VBOOT_HASH, encoded);
-            verifiedBootHash = randomBytes;
+
+            String vbmetaProp = SystemProperties.get("ro.boot.vbmeta.digest", "");
+
+            if (vbmetaProp != null && vbmetaProp.length() == 64) {
+                verifiedBootHash = hexStringToByteArray(vbmetaProp);
         } else {
-            verifiedBootHash = Base64.decode(hash, Base64.NO_WRAP);
+                verifiedBootHash = new byte[32];
+                random.nextBytes(verifiedBootHash);
         }
 
         ASN1Encodable[] rootOfTrustEncodables = {
@@ -217,6 +201,18 @@ public class KeyboxImitationHooks {
             Log.e(TAG, "Invalid patch level: " + patchLevel, e);
             return 202404;
         }
+    }
+
+    private static byte[] hexStringToByteArray(String hex) {
+        int len = hex.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            int high = Character.digit(hex.charAt(i), 16);
+            int low = Character.digit(hex.charAt(i + 1), 16);
+            if (high == -1 || low == -1) throw new IllegalArgumentException("Invalid hex");
+            data[i / 2] = (byte) ((high << 4) + low);
+        }
+        return data;
     }
 
     private static void dlog(String msg) {
