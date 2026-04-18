@@ -12269,6 +12269,11 @@ public final class Settings {
         /**
          * @hide
          */
+        public static final String SPOOF_PIF_CONFIG = "spoof_pif_config";
+
+        /**
+         * @hide
+         */
         public static final String SPOOF_TRICKYSTORE_TARGET = "spoof_trickystore_target";
 
         /**

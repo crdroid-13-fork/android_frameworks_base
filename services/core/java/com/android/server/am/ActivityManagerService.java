@@ -18721,6 +18721,10 @@ public class ActivityManagerService extends IActivityManager.Stub
         return mActivityTaskManager.shouldForceCutoutFullscreen(packageName);
     }
 
+    @Override
+    public String getSpoofPifConfig() {
+        return AxExtServiceFactory.getSpoofManager().getPifConfig();
+    }
 
     @Override
     public String getSpoofTrickyStoreTarget() {

@@ -770,6 +770,9 @@ interface IActivityManager {
      */
     boolean shouldForceCutoutFullscreen(in String packageName);
 
+    /* PIF */
+    String getSpoofPifConfig();
+
     /* Tricky Store */
     String getSpoofTrickyStoreTarget();
 
