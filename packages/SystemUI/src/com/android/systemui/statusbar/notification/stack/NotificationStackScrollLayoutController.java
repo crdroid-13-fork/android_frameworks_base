@@ -221,6 +221,7 @@ public class NotificationStackScrollLayoutController {
                     mConfigurationController.removeCallback(mConfigurationListener);
                     mZenModeController.removeCallback(mZenModeControllerCallback);
                     mStatusBarStateController.removeCallback(mStateListener);
+                    mTunerService.removeTunable(mTunable);
                 }
             };
 
@@ -785,17 +786,7 @@ public class NotificationStackScrollLayoutController {
         mVisibilityLocationProviderDelegator.setDelegate(this::isInVisibleLocation);
 
         mTunerService.addTunable(
-                (key, newValue) -> {
-                    switch (key) {
-                        case Settings.Secure.NOTIFICATION_HISTORY_ENABLED:
-                            mHistoryEnabled = null;  // invalidate
-                            updateFooter();
-                            break;
-                        case HIGH_PRIORITY:
-                            mView.setHighPriorityBeforeSpeedBump("1".equals(newValue));
-                            break;
-                    }
-                },
+                mTunable,
                 HIGH_PRIORITY,
                 Settings.Secure.NOTIFICATION_HISTORY_ENABLED);
 
@@ -824,6 +815,17 @@ public class NotificationStackScrollLayoutController {
         mGroupExpansionManager.registerGroupExpansionChangeListener(
                 (changedRow, expanded) -> mView.onGroupExpandChanged(changedRow, expanded));
     }
+
+    private TunerService.Tunable mTunable = (key, newValue) -> {
+        switch (key) {
+            case Settings.Secure.NOTIFICATION_HISTORY_ENABLED:
+                mHistoryEnabled = null;  // Invalidate
+                break;
+            case HIGH_PRIORITY:
+                mView.setHighPriorityBeforeSpeedBump("1".equals(newValue));
+                break;
+        }
+    };
 
     private boolean isInVisibleLocation(NotificationEntry entry) {
         ExpandableNotificationRow row = entry.getRow();
