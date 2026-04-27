@@ -218,7 +218,7 @@ public class AuthorizationList {
             }
             ASN1TaggedObject taggedObject = (ASN1TaggedObject) entry;
             int tag = taggedObject.getTagNo();
-            var value = taggedObject.getBaseObject().toASN1Primitive();
+            var value = taggedObject.getObject().toASN1Primitive();
             Log.d("Attestation", "Parsing tag: [" + tag + "], value: [" + value + "]");
 
             switch (tag) {
