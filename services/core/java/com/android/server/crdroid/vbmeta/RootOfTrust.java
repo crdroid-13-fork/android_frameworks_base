@@ -22,9 +22,10 @@ public class RootOfTrust {
     private final byte[] verifiedBootHash;
 
     public RootOfTrust(ASN1Encodable asn1Encodable) throws CertificateParsingException {
-        if (!(asn1Encodable instanceof ASN1Sequence sequence)) {
+        if (!(asn1Encodable instanceof ASN1Sequence)) {
             throw new CertificateParsingException("Expected sequence for root of trust, found " + asn1Encodable.getClass().getName());
         }
+        ASN1Sequence sequence = (ASN1Sequence) asn1Encodable;
 
         verifiedBootKey = ASN1Utils.getByteArrayFromAsn1(sequence.getObjectAt(VERIFIED_BOOT_KEY_INDEX));
         deviceLocked = ASN1Utils.getBooleanFromAsn1(sequence.getObjectAt(DEVICE_LOCKED_INDEX));
