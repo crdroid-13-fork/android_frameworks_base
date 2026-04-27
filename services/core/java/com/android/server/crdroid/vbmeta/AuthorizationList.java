@@ -208,13 +208,15 @@ public class AuthorizationList {
     private String secondImei;
 
     public AuthorizationList(ASN1Encodable asn1Encodable) throws CertificateParsingException {
-        if (!(asn1Encodable instanceof ASN1Sequence sequence)) {
+        if (!(asn1Encodable instanceof ASN1Sequence)) {
             throw new CertificateParsingException("Expected sequence for authorization list, found " + asn1Encodable.getClass().getName());
         }
+        ASN1Sequence sequence = (ASN1Sequence) asn1Encodable;
         for (ASN1Encodable entry : sequence) {
-            if (!(entry instanceof ASN1TaggedObject taggedObject)) {
+            if (!(entry instanceof ASN1TaggedObject)) {
                 throw new CertificateParsingException("Expected tagged object, found " + entry.getClass().getName());
             }
+            ASN1TaggedObject taggedObject = (ASN1TaggedObject) entry;
             int tag = taggedObject.getTagNo();
             var value = taggedObject.getBaseObject().toASN1Primitive();
             Log.d("Attestation", "Parsing tag: [" + tag + "], value: [" + value + "]");
