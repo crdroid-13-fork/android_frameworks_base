@@ -624,7 +624,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private int mMenuShortPressAction;
     private int mAssistShortPressAction;
     private int mEdgeLongSwipeAction;
-    private int mShakeGestureAction;
+    private Action mShakeGestureAction;
 
     // Custom policy for #SUPPORTED_KEYCODES_LIST key codes.
     public static SparseBooleanArray mKeyPressed = new SparseBooleanArray(NavbarUtilities.SUPPORTED_KEYCODE_LIST.length);
@@ -6200,7 +6200,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         KeyEvent.KEYCODE_SYSRQ, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
                         KeyEvent.FLAG_FROM_SYSTEM, InputDevice.SOURCE_TOUCHSCREEN);
                 performKeyAction(mShakeGestureAction, event);
-                performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, "Shake Gesture");
+                performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, false, "Shake Gesture");
             }
         });
         mShakeGestures.onStart();
@@ -7382,6 +7382,74 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         if (repeat) {
             mHandler.postDelayed(r, 125);
+        }
+    }
+
+    private void performKeyAction(Action action, KeyEvent event) {
+        // By default, pass INVOCATION_TYPE_UNKNOWN to launch assistant.
+        performKeyAction(action, event, AssistUtils.INVOCATION_TYPE_UNKNOWN);
+    }
+
+    private void performKeyAction(Action action, KeyEvent event, int assistInvocationType) {
+        switch (action) {
+            case NOTHING:
+                break;
+            case MENU:
+                triggerVirtualKeypress(KeyEvent.KEYCODE_MENU, false, false);
+                break;
+            case APP_SWITCH:
+                toggleRecentApps();
+                break;
+            case SEARCH:
+                launchAssistAction(null, -1, -1, AssistUtils.INVOCATION_TYPE_UNKNOWN);
+                break;
+            case VOICE_SEARCH:
+                launchVoiceAssist(mAllowStartActivityForLongPressOnPowerDuringSetup);
+                break;
+            case IN_APP_SEARCH:
+                triggerVirtualKeypress(KeyEvent.KEYCODE_SEARCH, false, false);
+                break;
+            case LAUNCH_CAMERA:
+                launchCameraAction();
+                break;
+            case SLEEP:
+                mPowerManager.goToSleep(SystemClock.uptimeMillis());
+                break;
+            case LAST_APP:
+                ActionUtils.switchToLastApp(mContext, mCurrentUserId);
+                break;
+            case SPLIT_SCREEN:
+                toggleSplitScreen();
+                break;
+            case KILL_APP:
+                ActionUtils.killForegroundApp(mContext, mCurrentUserId);
+                break;
+            //case PLAY_PAUSE_MUSIC:
+            //    triggerVirtualKeypress(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, false, false);
+            //    break;
+            case TORCH:
+                toggleTorch();
+                break;
+            case SCREENSHOT:
+                interceptScreenshotChord(TAKE_SCREENSHOT_FULLSCREEN, SCREENSHOT_KEY_OTHER, 0 /*pressDelay*/);
+                break;
+            case VOLUME_PANEL:
+                toggleVolumePanel();
+                break;
+            case CLEAR_ALL_NOTIFICATIONS:
+                clearAllNotifications();
+                break;
+            case NOTIFICATIONS:
+                toggleNotificationPanel();
+                break;
+            case QS_PANEL:
+                toggleQsPanel();
+                break;
+            case RINGER_MODES:
+                toggleRingerModes();
+                break;
+            default:
+                break;
         }
     }
 
