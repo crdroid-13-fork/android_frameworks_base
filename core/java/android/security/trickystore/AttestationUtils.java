@@ -128,7 +128,7 @@ public final class AttestationUtils {
             for (int i = 0; i < teeEnforced.size(); i++) {
                 ASN1TaggedObject tagged = (ASN1TaggedObject) teeEnforced.getObjectAt(i);
                 if (tagged.getTagNo() == 704) {
-                    ASN1Sequence rootOfTrust = (ASN1Sequence) tagged.getBaseObject();
+                    ASN1Sequence rootOfTrust = (ASN1Sequence) tagged.getObject();
                     if (rootOfTrust.size() >= 4) {
                         ASN1OctetString bootHashOctet = (ASN1OctetString) rootOfTrust.getObjectAt(3);
                         byte[] hash = bootHashOctet.getOctets();

@@ -89,7 +89,7 @@ public final class CertificateHacker {
             for (ASN1Encodable element : teeEnforced) {
                 ASN1TaggedObject taggedObject = (ASN1TaggedObject) element;
                 if (taggedObject.getTagNo() == 704) {
-                    originalRootOfTrust = taggedObject.getBaseObject().toASN1Primitive();
+                    originalRootOfTrust = taggedObject.getObject().toASN1Primitive();
                 } else {
                     vector.add(taggedObject);
                 }
