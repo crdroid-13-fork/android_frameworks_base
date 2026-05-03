@@ -142,7 +142,6 @@ public class KeyStoreSecurityLevel {
     public KeyMetadata generateKey(@NonNull KeyDescriptor descriptor, KeyDescriptor attestationKey,
             Collection<KeyParameter> args, int flags, byte[] entropy)
             throws KeyStoreException {
-
         return handleExceptions(() -> mSecurityLevel.generateKey(
                 descriptor, attestationKey, args.toArray(new KeyParameter[args.size()]),
                 flags, entropy));

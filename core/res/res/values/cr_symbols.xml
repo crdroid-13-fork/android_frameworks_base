@@ -164,7 +164,4 @@
 
     <!-- Ignore post running notifications for selected apps -->
     <java-symbol type="array" name="config_postNotificationIgnoredApps" />
-
-    <!-- KeyboxImitationHooks -->
-    <java-symbol type="array" name="config_certifiedKeybox" />
 </resources>
