@@ -166,8 +166,8 @@ public final class AttestationUtils {
             case Build.VERSION_CODES.S: return 120000;
             case Build.VERSION_CODES.S_V2: return 120100;
             case Build.VERSION_CODES.TIRAMISU: return 130000;
-            case Build.VERSION_CODES.UPSIDE_DOWN_CAKE: return 140000;
-            case Build.VERSION_CODES.VANILLA_ICE_CREAM: return 150000;
+//            case Build.VERSION_CODES.UPSIDE_DOWN_CAKE: return 140000;
+//            case Build.VERSION_CODES.VANILLA_ICE_CREAM: return 150000;
             default: return 160000;
         }
     }
@@ -182,9 +182,9 @@ public final class AttestationUtils {
                 return 100;
             case Build.VERSION_CODES.TIRAMISU:
                 return 200;
-            case Build.VERSION_CODES.UPSIDE_DOWN_CAKE:
-            case Build.VERSION_CODES.VANILLA_ICE_CREAM:
-                return 300;
+//            case Build.VERSION_CODES.UPSIDE_DOWN_CAKE:
+//            case Build.VERSION_CODES.VANILLA_ICE_CREAM:
+//                return 300;
             default:
                 return 400;
         }
