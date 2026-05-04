@@ -734,6 +734,8 @@ public abstract class AndroidKeyStoreKeyPairGeneratorSpi extends KeyPairGenerato
 
                 if (mSpec.isDevicePropertiesAttestationIncluded()) {
                     try {
+                        Log.w(TAG, "Entering device properties but not supported by android 13");
+                        /*
                         final String brand = isPropertyEmptyOrUnknown(Build.BRAND_FOR_ATTESTATION)
                                 ? Build.BRAND : Build.BRAND_FOR_ATTESTATION;
                         params.brand = brand.getBytes(StandardCharsets.UTF_8);
@@ -753,6 +755,7 @@ public abstract class AndroidKeyStoreKeyPairGeneratorSpi extends KeyPairGenerato
                         final String model = isPropertyEmptyOrUnknown(Build.MODEL_FOR_ATTESTATION)
                                 ? Build.MODEL : Build.MODEL_FOR_ATTESTATION;
                         params.model = model.getBytes(StandardCharsets.UTF_8);
+                         */
                     } catch (Exception e) {
                         Log.w(TAG, "Failed to set device properties for attestation", e);
                     }
