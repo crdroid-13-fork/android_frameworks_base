@@ -2788,9 +2788,9 @@ public class ComputerEngine implements Computer {
      * Returns whether caller is system, root, shell, or updated system app.
      */
     private final boolean isCallerSystem(int callingUid) {
-        if (isSystemOrRootOrShell(callingUid)) {
-            return true;
-        }
+       // if (isSystemOrRootOrShell(callingUid)) {
+       //     return true;
+       // }
         final SettingBase callingPs = mSettings.getSettingBase(UserHandle.getAppId(callingUid));
         if (callingPs == null) return false;
         final int callingFlags = callingPs.getFlags();
