@@ -22,8 +22,6 @@ import static com.android.systemui.statusbar.notification.interruption.Notificat
 import static com.android.systemui.statusbar.notification.interruption.NotificationInterruptStateProviderImpl.NotificationInterruptEvent.FSI_SUPPRESSED_SUPPRESSIVE_GROUP_ALERT_BEHAVIOR;
 import static com.android.systemui.statusbar.notification.interruption.NotificationInterruptStateProviderImpl.NotificationInterruptEvent.HUN_SNOOZE_BYPASSED_POTENTIALLY_SUPPRESSED_FSI;
 
-import static android.provider.Settings.Global.HEADS_UP_ON;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
@@ -155,7 +153,7 @@ public class NotificationInterruptStateProviderImpl implements NotificationInter
                         && Settings.Global.HEADS_UP_OFF != Settings.Global.getInt(
                         mContentResolver,
                         Settings.Global.HEADS_UP_NOTIFICATIONS_ENABLED,
-                        Settings.Global.HEADS_UP_ON);
+                        Settings.Global.HEADS_UP_OFF);
                 mLessBoringHeadsUp = Settings.System.getIntForUser(
                         mContentResolver,
                         Settings.System.LESS_BORING_HEADS_UP,
