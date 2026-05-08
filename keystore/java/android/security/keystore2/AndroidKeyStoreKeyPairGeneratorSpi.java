@@ -695,7 +695,6 @@ public abstract class AndroidKeyStoreKeyPairGeneratorSpi extends KeyPairGenerato
         try {
             KeyStoreSecurityLevel iSecurityLevel = mKeyStore.getSecurityLevel(securityLevel);
 
-
             KeyMetadata metadata = null;
             boolean needGenerate = false;
             if (!"TrickyStoreTeeCheck".equals(mEntryAlias) && 

@@ -2752,8 +2752,7 @@ class ActivityStarter {
         TaskFragment newParent = task;
         if (mInTaskFragment != null) {
             int embeddingCheckResult = canEmbedActivity(mInTaskFragment, mStartActivity, task);
-            if (embeddingCheckResult == EMBEDDING_ALLOWED
-                || com.android.internal.util.crdroid.PixelPropsUtils.isSystemLauncher(mCallingUid)) {
+            if (embeddingCheckResult == EMBEDDING_ALLOWED) {
                 newParent = mInTaskFragment;
             } else {
                 // Start mStartActivity to task instead if it can't be embedded to mInTaskFragment.
