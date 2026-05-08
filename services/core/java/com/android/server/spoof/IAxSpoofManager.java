@@ -20,6 +20,8 @@ public interface IAxSpoofManager {
     default void systemReady() {
     }
 
+    String getPifConfig();
+
     String getTrickyStoreTarget();
 
     String getTrickyStoreKeyBox();
