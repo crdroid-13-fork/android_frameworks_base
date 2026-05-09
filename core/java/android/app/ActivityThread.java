@@ -155,7 +155,6 @@ import android.provider.Settings;
 import android.renderscript.RenderScriptCacheDir;
 import android.security.NetworkSecurityPolicy;
 import android.security.net.config.NetworkSecurityConfigProvider;
-import android.security.gameprops.GamePropsSpoofService;
 import android.security.pif.PlayIntegritySpoofService;
 import android.system.ErrnoException;
 import android.system.OsConstants;
@@ -6718,11 +6717,6 @@ public final class ActivityThread extends ClientTransactionHandler
 
         final ContextImpl appContext = ContextImpl.createAppContext(this, data.info);
         mConfigurationController.updateLocaleListFromAppContext(appContext);
-
-        GamePropsSpoofService gamePropsService = GamePropsSpoofService.getInstance();
-        if (gamePropsService.isEnabled()) {
-            gamePropsService.spoofForPackage(data.appInfo.packageName);
-        }
 
         PlayIntegritySpoofService pifService = PlayIntegritySpoofService.getInstance();
         if (pifService.shouldSpoof(data.processName)) {
